@@ -4,12 +4,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGoogleSheet } from "@/hooks/useGoogleSheet";
 import { useSyncSheet } from "@/hooks/useSyncSheet";
 import { DataTable } from "@/components/DataTable";
+import { SyncHistory } from "@/components/SyncHistory";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LogOut, Loader2, RefreshCw } from "lucide-react";
 
 // Extract sheet ID from the URL
-const SHEET_ID = "1T-vyJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DH";
+const SHEET_ID = "1T-yJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DHg";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
@@ -57,7 +58,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 space-y-6">
         <Card>
           <CardHeader>
             <div className="flex justify-between items-start">
@@ -107,6 +108,8 @@ const Index = () => {
             )}
           </CardContent>
         </Card>
+
+        <SyncHistory />
       </main>
     </div>
   );

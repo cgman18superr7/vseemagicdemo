@@ -6,7 +6,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SHEET_ID = "1T-vyJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DH";
+const SHEET_ID = "1T-yJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DHg";
 
 function parseCSV(text: string): string[][] {
   const lines = text.split('\n');
