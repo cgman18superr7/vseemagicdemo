@@ -20,10 +20,10 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
-  // Filter rows where column A (index 0) matches user email
-  const userRows = rows.filter(
-    (row) => row.data[0]?.toLowerCase().trim() === userEmail.toLowerCase().trim()
-  );
+  // Check if row belongs to current user (column A email matches)
+  const isUserRow = (row: { data: string[] }) => {
+    return row.data[0]?.toLowerCase().trim() === userEmail.toLowerCase().trim();
+  };
 
   // Load saved edits from database
   useEffect(() => {
@@ -109,10 +109,10 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
     return editedRows[rowIndex] !== undefined;
   };
 
-  if (userRows.length === 0) {
+  if (rows.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">找不到與你電郵 ({userEmail}) 對應的資料。</p>
+        <p className="text-muted-foreground">沒有資料。</p>
         <Button variant="outline" onClick={onRefresh} className="mt-4">
           <RefreshCw className="w-4 h-4 mr-2" />
           重新載入
@@ -121,11 +121,13 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
     );
   }
 
+  const userRowCount = rows.filter(isUserRow).length;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          顯示 {userRows.length} 行你的資料
+          共 {rows.length} 行資料，其中 {userRowCount} 行屬於你（可編輯）
         </p>
         <Button variant="outline" onClick={onRefresh} size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -146,39 +148,51 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userRows.map((row) => (
-              <TableRow key={row.rowIndex}>
-                {headers.map((_, cellIndex) => (
-                  <TableCell key={cellIndex}>
-                    {cellIndex === 0 ? (
-                      <span className="text-muted-foreground">{getCellValue(row, cellIndex)}</span>
+            {rows.map((row) => {
+              const canEdit = isUserRow(row);
+              return (
+                <TableRow 
+                  key={row.rowIndex}
+                  className={canEdit ? "bg-primary/5" : ""}
+                >
+                  {headers.map((_, cellIndex) => (
+                    <TableCell key={cellIndex}>
+                      {!canEdit || cellIndex === 0 ? (
+                        <span className={cellIndex === 0 ? "text-muted-foreground" : ""}>
+                          {getCellValue(row, cellIndex)}
+                        </span>
+                      ) : (
+                        <Input
+                          value={getCellValue(row, cellIndex)}
+                          onChange={(e) => handleCellChange(row.rowIndex, cellIndex, e.target.value)}
+                          className="min-w-[120px]"
+                        />
+                      )}
+                    </TableCell>
+                  ))}
+                  <TableCell>
+                    {canEdit ? (
+                      <Button
+                        size="sm"
+                        onClick={() => handleSave(row.rowIndex)}
+                        disabled={saving || !hasChanges(row.rowIndex)}
+                      >
+                        <Save className="w-4 h-4 mr-1" />
+                        儲存
+                      </Button>
                     ) : (
-                      <Input
-                        value={getCellValue(row, cellIndex)}
-                        onChange={(e) => handleCellChange(row.rowIndex, cellIndex, e.target.value)}
-                        className="min-w-[120px]"
-                      />
+                      <span className="text-xs text-muted-foreground">只讀</span>
                     )}
                   </TableCell>
-                ))}
-                <TableCell>
-                  <Button
-                    size="sm"
-                    onClick={() => handleSave(row.rowIndex)}
-                    disabled={saving || !hasChanges(row.rowIndex)}
-                  >
-                    <Save className="w-4 h-4 mr-1" />
-                    儲存
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
       
       <p className="text-xs text-muted-foreground">
-        * 電郵欄位無法修改。修改其他欄位後按「儲存」將資料存入資料庫。
+        * 只有 A 欄電郵與你登入電郵相同的行才可編輯（淺色背景）。電郵欄位無法修改。
       </p>
     </div>
   );
