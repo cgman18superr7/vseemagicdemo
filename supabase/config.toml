@@ -1,1 +1,4 @@
 project_id = "wbrkjnrutcxobmgwlppt"
+
+[functions.sync-sheet]
+verify_jwt = false
