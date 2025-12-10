@@ -44,6 +44,60 @@ export type Database = {
         }
         Relationships: []
       }
+      sheet_sync: {
+        Row: {
+          created_at: string
+          id: string
+          row_data: Json
+          row_index: number
+          synced_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          row_data?: Json
+          row_index: number
+          synced_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          row_data?: Json
+          row_index?: number
+          synced_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sync_logs: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          rows_synced: number
+          status: string
+          sync_type: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          rows_synced?: number
+          status?: string
+          sync_type: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          rows_synced?: number
+          status?: string
+          sync_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
