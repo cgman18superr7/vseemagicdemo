@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useGoogleSheet } from "@/hooks/useGoogleSheet";
+import { useSyncSheet } from "@/hooks/useSyncSheet";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, Loader2 } from "lucide-react";
+import { LogOut, Loader2, RefreshCw } from "lucide-react";
 
 // Extract sheet ID from the URL
 const SHEET_ID = "1T-vyJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DH";
@@ -14,12 +15,20 @@ const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { headers, rows, loading: sheetLoading, error, refetch } = useGoogleSheet(SHEET_ID);
+  const { syncSheet, syncing, lastSync } = useSyncSheet();
 
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/auth");
     }
   }, [user, authLoading, navigate]);
+
+  const handleSync = async () => {
+    const result = await syncSheet();
+    if (result.success) {
+      refetch();
+    }
+  };
 
   if (authLoading) {
     return (
@@ -51,10 +60,28 @@ const Index = () => {
       <main className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>你的資料</CardTitle>
-            <CardDescription>
-              以下顯示與你電郵對應的資料行。你可以編輯並儲存修改。
-            </CardDescription>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle>你的資料</CardTitle>
+                <CardDescription>
+                  以下顯示與你電郵對應的資料行。你可以編輯並儲存修改。
+                  {lastSync && <span className="ml-2 text-xs">（上次同步：{lastSync}）</span>}
+                </CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSync}
+                disabled={syncing}
+              >
+                {syncing ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                )}
+                同步資料
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {sheetLoading ? (
