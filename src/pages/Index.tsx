@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { LogOut, Loader2 } from "lucide-react";
 
 // Extract sheet ID from the URL
-const SHEET_ID = "1T-vyJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DHg";
+const SHEET_ID = "1T-vyJr4oWKO9Bz78NfH2FyAU83OEFsBYgU2x7m_53DH";
 
 const Index = () => {
   const { user, loading: authLoading, signOut } = useAuth();
