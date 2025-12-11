@@ -124,6 +124,18 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
     return row.data[cellIndex] || "";
   };
 
+  // Columns to truncate (show only first 10 characters)
+  const truncateColumns = ["主題", "ig link", "api key"];
+  
+  const shouldTruncate = (header: string) => {
+    return truncateColumns.includes(header.toLowerCase().trim());
+  };
+
+  const truncateText = (text: string, maxLength: number = 10) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
   const hasChanges = (rowIndex: number) => {
     return editedRows[rowIndex] !== undefined;
   };
@@ -172,21 +184,29 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
                   key={row.rowIndex}
                   className={canEdit ? "bg-primary/5" : ""}
                 >
-                  {headers.map((_, cellIndex) => (
-                    <TableCell key={cellIndex}>
-                      {!canEdit || cellIndex === 0 ? (
-                        <span className={cellIndex === 0 ? "text-muted-foreground" : ""}>
-                          {getCellValue(row, cellIndex)}
-                        </span>
-                      ) : (
-                        <Input
-                          value={getCellValue(row, cellIndex)}
-                          onChange={(e) => handleCellChange(row.rowIndex, cellIndex, e.target.value)}
-                          className="min-w-[120px]"
-                        />
-                      )}
-                    </TableCell>
-                  ))}
+                  {headers.map((header, cellIndex) => {
+                    const cellValue = getCellValue(row, cellIndex);
+                    const displayValue = shouldTruncate(header) ? truncateText(cellValue) : cellValue;
+                    
+                    return (
+                      <TableCell key={cellIndex}>
+                        {!canEdit || cellIndex === 0 ? (
+                          <span 
+                            className={cellIndex === 0 ? "text-muted-foreground" : ""}
+                            title={shouldTruncate(header) ? cellValue : undefined}
+                          >
+                            {displayValue}
+                          </span>
+                        ) : (
+                          <Input
+                            value={cellValue}
+                            onChange={(e) => handleCellChange(row.rowIndex, cellIndex, e.target.value)}
+                            className="min-w-[120px]"
+                          />
+                        )}
+                      </TableCell>
+                    );
+                  })}
                   <TableCell>
                     {canEdit ? (
                       <Button
