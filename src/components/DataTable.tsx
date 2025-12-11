@@ -125,14 +125,15 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
   };
 
   // Columns to truncate (show only first 10 characters)
-  const truncateColumns = ["主題", "ig link", "api key"];
+  const truncateColumns = ["主題", "ig link", "api key", "ig帳", "biolato id"];
   
   const shouldTruncate = (header: string) => {
-    return truncateColumns.includes(header.toLowerCase().trim());
+    const h = header.toLowerCase().trim();
+    return truncateColumns.some(col => h.includes(col.toLowerCase()) || col.toLowerCase().includes(h));
   };
 
   const truncateText = (text: string, maxLength: number = 10) => {
-    if (text.length <= maxLength) return text;
+    if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
