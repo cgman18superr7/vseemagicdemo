@@ -23,7 +23,7 @@ const Index = () => {
     (h) => h.toLowerCase().trim() === "email"
   );
   const filteredRows = emailColumnIndex >= 0
-    ? rows.filter((row) => row[emailColumnIndex]?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+    ? rows.filter((row) => row.data[emailColumnIndex]?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
     : rows;
 
   useEffect(() => {

@@ -140,13 +140,11 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
     );
   }
 
-  const userRowCount = rows.filter(isUserRow).length;
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          共 {rows.length} 行資料，其中 {userRowCount} 行屬於你（可編輯）
+          共 {rows.length} 行屬於你的資料
         </p>
         <Button variant="outline" onClick={onRefresh} size="sm">
           <RefreshCw className="w-4 h-4 mr-2" />
