@@ -18,6 +18,14 @@ const Index = () => {
   const { headers, rows, loading: sheetLoading, error, refetch } = useGoogleSheet(SHEET_ID);
   const { syncSheet, syncing, lastSync } = useSyncSheet();
 
+  // Filter rows to only show user's own data (where EMAIL column matches login email)
+  const emailColumnIndex = headers.findIndex(
+    (h) => h.toLowerCase().trim() === "email"
+  );
+  const filteredRows = emailColumnIndex >= 0
+    ? rows.filter((row) => row[emailColumnIndex]?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
+    : rows;
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/auth");
@@ -100,7 +108,7 @@ const Index = () => {
             ) : (
               <DataTable
                 headers={headers}
-                rows={rows}
+                rows={filteredRows}
                 userEmail={user.email || ""}
                 userId={user.id}
                 onRefresh={refetch}
