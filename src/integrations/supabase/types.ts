@@ -21,7 +21,6 @@ export type Database = {
           original_row_index: number | null
           row_data: Json
           updated_at: string
-          user_email: string
           user_id: string
         }
         Insert: {
@@ -30,7 +29,6 @@ export type Database = {
           original_row_index?: number | null
           row_data?: Json
           updated_at?: string
-          user_email: string
           user_id: string
         }
         Update: {
@@ -39,7 +37,6 @@ export type Database = {
           original_row_index?: number | null
           row_data?: Json
           updated_at?: string
-          user_email?: string
           user_id?: string
         }
         Relationships: []
