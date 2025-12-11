@@ -71,7 +71,6 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
         .from("sheet_edits")
         .upsert({
           user_id: userId,
-          user_email: userEmail,
           original_row_index: rowIndex,
           row_data: rowData,
         }, {
