@@ -22,9 +22,19 @@ const Index = () => {
   const emailColumnIndex = headers.findIndex(
     (h) => h.toLowerCase().trim() === "email"
   );
-  const filteredRows = emailColumnIndex >= 0
-    ? rows.filter((row) => row.data[emailColumnIndex]?.toLowerCase().trim() === user?.email?.toLowerCase().trim())
-    : rows;
+  
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  
+  const filteredRows = emailColumnIndex >= 0 && userEmail
+    ? rows.filter((row) => {
+        const rowEmail = row.data[emailColumnIndex]?.toLowerCase().trim() || "";
+        const matches = rowEmail === userEmail;
+        console.log(`Row ${row.rowIndex}: "${rowEmail}" vs "${userEmail}" = ${matches}`);
+        return matches;
+      })
+    : [];
+  
+  console.log(`Email column index: ${emailColumnIndex}, User email: ${userEmail}, Total rows: ${rows.length}, Filtered: ${filteredRows.length}`);
 
   useEffect(() => {
     if (!authLoading && !user) {
