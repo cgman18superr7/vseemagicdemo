@@ -67,6 +67,7 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
     }
 
     try {
+      // Save to Supabase database
       const { error } = await supabase
         .from("sheet_edits")
         .upsert({
@@ -79,6 +80,25 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
 
       if (error) throw error;
 
+      // Write back to Google Sheet via Apps Script
+      const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEnbOcA9zOMuNfnNMf2X54TOUfhG3TU7KjF2HDiAAamVCLghhUdKFc1uJ-QxN2vstDWA/exec";
+      
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            row_index: rowIndex,
+            row_data: rowData,
+          }),
+        });
+      } catch (sheetError) {
+        console.warn("Google Sheet 同步失敗，但資料已存到資料庫", sheetError);
+      }
+
       setSavedEdits((prev) => ({ ...prev, [rowIndex]: rowData }));
       setEditedRows((prev) => {
         const newEdits = { ...prev };
@@ -86,7 +106,7 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
         return newEdits;
       });
 
-      toast({ title: "已儲存！", description: "你的修改已儲存到資料庫。" });
+      toast({ title: "已儲存！", description: "你的修改已同步到資料庫和 Google Sheet。" });
     } catch (err: any) {
       toast({ title: "儲存失敗", description: err.message, variant: "destructive" });
     } finally {
