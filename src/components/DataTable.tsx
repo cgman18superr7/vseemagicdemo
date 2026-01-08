@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ interface DataTableProps {
   onRefresh: () => void;
 }
 
-export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataTableProps) => {
+export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(({ headers, rows, userEmail, userId, onRefresh }, ref) => {
   const [editedRows, setEditedRows] = useState<Record<number, string[]>>({});
   const [savedEdits, setSavedEdits] = useState<Record<number, string[]>>({});
   const [saving, setSaving] = useState(false);
@@ -154,7 +154,7 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" ref={ref}>
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           共 {rows.length} 行屬於你的資料
@@ -234,4 +234,6 @@ export const DataTable = ({ headers, rows, userEmail, userId, onRefresh }: DataT
       </p>
     </div>
   );
-};
+});
+
+DataTable.displayName = "DataTable";
