@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,7 @@ interface SyncLog {
   created_at: string;
 }
 
-export const SyncHistory = () => {
+export const SyncHistory = forwardRef<HTMLDivElement>((_, ref) => {
   const [logs, setLogs] = useState<SyncLog[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +59,7 @@ export const SyncHistory = () => {
   }
 
   return (
-    <Card>
+    <Card ref={ref}>
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Clock className="w-4 h-4" />
@@ -110,4 +110,6 @@ export const SyncHistory = () => {
       </CardContent>
     </Card>
   );
-};
+});
+
+SyncHistory.displayName = "SyncHistory";
