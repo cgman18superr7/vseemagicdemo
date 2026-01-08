@@ -5,6 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // GitHub Pages 部署需要設定 base 路徑
+  // 請將 'vseemagicdemo' 替換為你的 GitHub 倉庫名稱
+  base: mode === "production" ? "/vseemagicdemo/" : "/",
   server: {
     host: "::",
     port: 8080,
